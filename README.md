@@ -1,8 +1,13 @@
 GMAIL IMAP API
 =============================
 
-Usage example:
+Wrapper above Gmail IMAP API
 
+## Requirements
+
+Zend Imap Library
+
+## Usage example
 
 ```php
 <?php
@@ -39,3 +44,11 @@ $gmail->archive($uid);
 
 
 ```
+
+## Author
+
+Alex Gavrishev, 2013
+
+## License
+
+Library is licensed under the MIT license.
