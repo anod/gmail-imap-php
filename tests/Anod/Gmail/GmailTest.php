@@ -1,5 +1,5 @@
 <?php
-namespace Anod;
+namespace Anod\Gmail;
 
 class GmailTest extends \PHPUnit_Framework_TestCase {
 	
