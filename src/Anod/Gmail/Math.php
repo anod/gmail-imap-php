@@ -1,5 +1,5 @@
 <?php
-namespace Anod;
+namespace Anod\Gmail;
 /**
  * 
  * @author Alex Gavrishev <alex.gavrishev@gmail.com>

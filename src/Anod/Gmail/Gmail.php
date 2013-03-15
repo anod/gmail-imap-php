@@ -1,5 +1,5 @@
 <?php
-namespace Anod;
+namespace Anod\Gmail;
 /**
  * 
  * @author Alex Gavrishev <alex.gavrishev@gmail.com>
@@ -24,7 +24,7 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	 */
 	public function __construct(\Zend\Mail\Protocol\Imap $protocol) {
 		$this->protocol = $protocol;
-		$this->oauth = new \OAuth($protocol);
+		$this->oauth = new OAuth($protocol);
 	}
 	
 	public function setId($name, $version, $vendor, $contact) {
@@ -77,7 +77,7 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	
 	/**
 	 *
-	 * @return \GTD\Gmail
+	 * @return \Anod\Gmail\Gmail
 	 */
 	public function connect() {
 		$this->protocol->connect(self::GMAIL_HOST, self::GMAIL_PORT, self::USE_SSL);
@@ -87,7 +87,7 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	/**
 	 * 
 	 * @throws GmailException
-	 * @return \GTD\Gmail
+	 * @return \Anod\Gmail\Gmail
 	 */
 	public function selectInbox() {
 		$result = $this->protocol->select('INBOX');
