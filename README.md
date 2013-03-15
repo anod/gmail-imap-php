@@ -30,7 +30,7 @@ $gmail->applyLabel($uid, "MyLabel");
 $message = $gmail->getMessageData($uid);
 $details = array(
 	'subject' => $this->message->getHeader('subject', 'string'),
-	'body' => $body,
+	'body' =>  $this->message->getContent(),
 	'from' => $this->message->getHeader('from', 'string'),
 	'to' => $this->message->getHeader('to', 'string'),
 	'thrid' => \Anod\Math::bcdechex($this->message->getHeader('x-gm-thrid', 'string'))
