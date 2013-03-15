@@ -26,7 +26,7 @@ $gmail = new \Anod\Gmail($protocol);
 $gmail->setId("Example App","0.1","Alex Gavrishev","alex.gavrishev@gmail.com");
 
 $gmail->connect();
-$gmail->authenticate(email, token);
+$gmail->authenticate($email, $token);
 $gmail->sendId();
 $gmail->selectInbox();
 $uid = $gmail->getUID($msgId);
