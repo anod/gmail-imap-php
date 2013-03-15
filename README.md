@@ -21,8 +21,8 @@ $msgId = "1429570359846677735";
 
 
 $debug = true;
-$protocol = new \Anod\Imap(debug);
-$gmail = new \Anod\Gmail($protocol);
+$protocol = new \Anod\Gmail\Imap(debug);
+$gmail = new \Anod\Gmail\Gmail($protocol);
 $gmail->setId("Example App","0.1","Alex Gavrishev","alex.gavrishev@gmail.com");
 
 $gmail->connect();
