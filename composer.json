@@ -1,6 +1,6 @@
 {
 	"name": "anod/gmail-imap",
-	"description": "API to work with Gmail from IMAP built on top of Zend Imap Library",
+	"description": "API to work with Gmail using IMAP built on top of Zend Imap Library",
 	"keywords": ["gmail", "imap"],
 	"homepage": "http://github.com/anod/gmail-imap-php",
 	"authors": [
