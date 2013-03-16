@@ -17,7 +17,7 @@ $email = "youremail@gmail.com";
 $token = "ya29.AHES6ZQHcyLp0lxEIgdqUf0zaTi9grxCXlyPT6-Ejg85wSSXFBa28Pvh";
 
 $msgId = "1429570359846677735";  
-//$msgId = \Anod\Math::bchexdec("13d6daab0816ace7"); // == "1429570359846677735"
+//$msgId = \Anod\Gmail\Math::bchexdec("13d6daab0816ace7"); // == "1429570359846677735"
 
 
 $debug = true;
@@ -31,8 +31,9 @@ $gmail->sendId();
 $gmail->selectInbox();
 $uid = $gmail->getUID($msgId);
 
-$gmail->applyLabel($uid, "MyLabel");
-$message = $gmail->getMessageData($uid);
+$gmail->applyLabel($uid, "MyLabel"); //Apply label to a message with specific UID
+
+$message = $gmail->getMessageData($uid); //Retrieve message content
 $details = array(
 	'subject' => $this->message->getHeader('subject', 'string'),
 	'body' =>  $this->message->getContent(),
@@ -40,7 +41,8 @@ $details = array(
 	'to' => $this->message->getHeader('to', 'string'),
 	'thrid' => \Anod\Math::bcdechex($this->message->getHeader('x-gm-thrid', 'string'))
 );
-$gmail->archive($uid);
+
+$gmail->archive($uid); //Archive the message
 
 
 ```

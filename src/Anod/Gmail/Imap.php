@@ -1,7 +1,7 @@
 <?php
 namespace Anod\Gmail;
 /**
- * 
+ * Extendz Zend Imap with debug messages
  * @author Alex Gavrishev <alex.gavrishev@gmail.com>
  *
  */

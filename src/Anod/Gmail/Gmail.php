@@ -2,8 +2,12 @@
 namespace Anod\Gmail;
 /**
  * 
+ * TODO: removeLabel(s), applyLables, moveToInbox, markAsRead/markAsUnread
+ * 
  * @author Alex Gavrishev <alex.gavrishev@gmail.com>
- *
+ * 
+ * @see https://developers.google.com/google-apps/gmail/imap_extensions
+ * 
  */
 class Gmail extends \Zend\Mail\Storage\Imap {
 	const GMAIL_HOST = 'imap.gmail.com';
@@ -27,6 +31,14 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 		$this->oauth = new OAuth($protocol);
 	}
 	
+	/**
+	 * 
+	 * @param string $name
+	 * @param string $version
+	 * @param string $vendor
+	 * @param string $contact
+	 * @return \Anod\Gmail\Gmail
+	 */
 	public function setId($name, $version, $vendor, $contact) {
 		$this->id =array(
 			"name" , $name,
@@ -39,13 +51,14 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	
 	/**
 	 * @param bool $debug
+	 * @return \Anod\Gmail\Gmail
 	 */
 	public function setDebug($debug) {
 		$this->debug = (bool)$debug;
 		return $this;
 	}
 	/**
-	 * @return void
+	 * @return mixed
 	 */	
 	public function sendId() {
 		$escaped = array();
@@ -61,6 +74,7 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	 * 
 	 * @param string $email
 	 * @param string $accessToken
+	 * @return \Anod\Gmail\Gmail
 	 */
 	public function authenticate($email, $accessToken) {
 		$this->oauth->authenticate($email, $accessToken);
@@ -110,14 +124,15 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 
 	/**
 	 * 
-	 * @param string $uid
+	 * @param int $uid
+	 * @return null|bool|array tokens if success, false if error, null if bad request
 	 */
 	public function archive($uid) {
 		//1st veryfi that email in all mail folder
 		$folder = $this->protocol->escapeString("[Gmail]/All Mail");
 		$copy_response = $this->protocol->requestAndResponse('UID COPY', array($uid, $folder), true);
 		if ($copy_response) {
-			//Flag as deleted in inbox
+			//Flag as deleted in the current box
 			$items = array('\Deleted');
 			$itemList = $this->protocol->escapeList($items);
 			$response = $this->protocol->requestAndResponse('UID STORE', array($uid, '+FLAGS', $itemList), true);
@@ -127,8 +142,9 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	}
 	
 	/**
-	 * @param string $uid
+	 * @param int $uid
 	 * @param string $label
+	 * @return null|bool|array tokens if success, false if error, null if bad request
 	 */	
 	public function applyLabel($uid, $label) {
 		$response = $this->protocol->requestAndResponse('UID STORE', array($uid, '+X-GM-LABELS', '('.$label.')'));
@@ -137,11 +153,11 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	
 	/**
 	 * 
-	 * @param string $uid
+	 * @param int $uid
 	 * @throws GmailException
 	 * @return array
 	 */
-	public function getRawMessageData($uid) {
+	public function getMessageDataRaw($uid) {
 		$items = array('FLAGS', 'RFC822.HEADER', 'RFC822.TEXT');
 		$itemList = $this->protocol->escapeList($items);
 		
@@ -168,7 +184,7 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	
 	/**
 	 * 
-	 * @param string $uid
+	 * @param int $uid
 	 * @throws GmailException
 	 * @return string
 	 */
@@ -182,11 +198,11 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	
 	/**
 	 * 
-	 * @param string $uid
+	 * @param int $uid
 	 * @return \Zend\Mail\Storage\Message
 	 */
 	public function getMessageData($uid) {
-		$data = $this->getRawMessageData($uid);
+		$data = $this->getMessageDataRaw($uid);
 		$threadId = $this->getThreadId($uid);
 		
 		$header = $data['RFC822.HEADER'];		

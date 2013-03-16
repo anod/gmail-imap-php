@@ -3,3 +3,7 @@
 .project
 .settings
 .buildpath
+
+#Composer
+vendor/
+composer.lock

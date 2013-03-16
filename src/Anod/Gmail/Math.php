@@ -1,12 +1,19 @@
 <?php
 namespace Anod\Gmail;
 /**
+ * Helper to convert between different representaitons of gmail message_id
  * 
  * @author Alex Gavrishev <alex.gavrishev@gmail.com>
  *
  */
 class Math {
 	
+	/**
+	 * Converts hex number into large integer
+	 * \Anod\Gmail\Math::bchexdec("13d6daab0816ace7") == "1429570359846677735"
+	 * @param string $hex
+	 * @return number
+	 */
 	public static function bchexdec($hex)
 	{
 		$dec = 0;
@@ -17,6 +24,12 @@ class Math {
 		return $dec;
 	}
 	
+	/**
+	 * Converts large number into hex representation
+	 * \Anod\Gmail\Math::bchexdec("1429570359846677735") == "13d6daab0816ace7"
+	 * @param string $number
+	 * @return string
+	 */
 	public static function bcdechex($number)
 	{
 		$hexval = '';

@@ -1,6 +1,11 @@
 <?php
 namespace Anod\Gmail;
-
+/**
+ * 
+ * 
+ * @author Alex Gavrishev <alex.gavrishev@gmail.com>
+ *
+ */
 class GmailTest extends \PHPUnit_Framework_TestCase {
 	
 	/**
@@ -16,7 +21,7 @@ class GmailTest extends \PHPUnit_Framework_TestCase {
 		;
 		
 		$gmail = new Gmail($protocol);
-		$actual = $gmail->getRawMessageUID("53559");
+		$actual = $gmail->getMessageDataRaw("53559");
 		
 		$this->assertEquals($expected, $actual);
 		

@@ -1,6 +1,7 @@
 <?php
 namespace Anod\Gmail;
 /**
+ * Given an open IMAP connection, attempts to authenticate with OAuth2.
  * 
  * @author Alex Gavrishev <alex.gavrishev@gmail.com>
  *
