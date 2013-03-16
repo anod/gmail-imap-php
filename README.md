@@ -35,10 +35,10 @@ $gmail->applyLabel($uid, "MyLabel"); //Apply label to a message with specific UI
 
 $message = $gmail->getMessageData($uid); //Retrieve message content
 $details = array(
-	'subject' => $this->message->getHeader('subject', 'string'),
-	'body' =>  $this->message->getContent(),
-	'from' => $this->message->getHeader('from', 'string'),
-	'to' => $this->message->getHeader('to', 'string'),
+	'subject' => $message->getHeader('subject', 'string'),
+	'body' =>  $message->getContent(),
+	'from' => $message->getHeader('from', 'string'),
+	'to' => $message->getHeader('to', 'string'),
 	'thrid' => \Anod\Gmail\Math::bcdechex($this->message->getHeader('x-gm-thrid', 'string'))
 );
 
