@@ -14,8 +14,11 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	const GMAIL_PORT = '993';
 	const USE_SSL = true;
 
+	const MAILBOX_INBOX = 'INBOX';
+	const MAILBOX_ALL = '[Gmail]/All Mail';
+	
 	/**
-	 * @var OAuth
+	 * @var \Anod\Gmail\OAuth
 	 */
 	private $oauth;
 	/**
@@ -104,9 +107,22 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	 * @return \Anod\Gmail\Gmail
 	 */
 	public function selectInbox() {
-		$result = $this->protocol->select('INBOX');
+		$result = $this->protocol->select(self::MAILBOX_INBOX);
 		if (!$result) {
-			throw new GmailException("Cannot select INBOX");
+			throw new GmailException("Cannot select ".self::MAILBOX_INBOX);
+		}
+		return $this;
+	}
+	
+	/**
+	 *
+	 * @throws GmailException
+	 * @return \Anod\Gmail\Gmail
+	 */
+	public function selectAllMail() {
+		$result = $this->protocol->select(self::MAILBOX_ALL);
+		if (!$result) {
+			throw new GmailException("Cannot select ".self::MAILBOX_ALL);
 		}
 		return $this;
 	}
@@ -129,7 +145,7 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	 */
 	public function archive($uid) {
 		//1st veryfi that email in all mail folder
-		$folder = $this->protocol->escapeString("[Gmail]/All Mail");
+		$folder = $this->protocol->escapeString(self::MAILBOX_ALL);
 		$copy_response = $this->protocol->requestAndResponse('UID COPY', array($uid, $folder), true);
 		if ($copy_response) {
 			//Flag as deleted in the current box
