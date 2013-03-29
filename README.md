@@ -31,7 +31,7 @@ $gmail->selectInbox();
 $uid = $gmail->getUID($msgId);
 
 $gmail->applyLabel($uid, "Very Important"); //Apply label to a message with specific UID
-$gmail->removeLabel($uid, "Not Important"); //Apply label to a message with specific UID
+$gmail->removeLabel($uid, "Not Important"); //Remove label to a message with specific UID
 
 $message = $gmail->getMessageData($uid); //Retrieve message content
 $details = array(
@@ -39,9 +39,9 @@ $details = array(
     'body' =>  $message->getContent(),
     'from' => $message->getHeader('from', 'string'),
     'to' => $message->getHeader('to', 'string'),
-    'thrid' => \Anod\Gmail\Math::bcdechex($message->getHeader('x-gm-thrid', 'string'))
+    'thrid' => \Anod\Gmail\Math::bcdechex($message->getThreadId()),
+	'labels' => $message->getLabels()
 );
-print_r($details);
 
 $gmail->archive($uid); //Archive the message
 
