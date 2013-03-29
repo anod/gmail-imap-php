@@ -1,6 +1,7 @@
 <?php
 namespace Anod\Gmail;
 /**
+ * Represents one message
  * 
  * @author Alex Gavrishev <alex.gavrishev@gmail.com>
  * 
