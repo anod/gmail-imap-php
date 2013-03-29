@@ -196,6 +196,16 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 		return $this->storeLabels($uid, '-X-GM-LABELS', $labels);
 	}
 	
+	public function getLabels($uid) {
+		$itemList = $this->protocol->escapeList(array('X-GM-LABELS'));
+		
+		$fetch_response = $this->protocol->requestAndResponse('UID FETCH', array($uid, $itemList));
+		if (!isset($fetch_response[0][2]) || !is_array($fetch_response[0][2]) || !isset($fetch_response[0][2][1])) {
+			throw new GmailException("Cannot retreieve list of labels by uid. ".var_export($fetch_response, TRUE));
+		}
+		return $fetch_response[0][2][1];
+	}
+	
 	/**
 	 * 
 	 * @param int $uid
@@ -203,7 +213,7 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	 * @return array
 	 */
 	public function getMessageDataRaw($uid) {
-		$items = array('FLAGS', 'RFC822.HEADER', 'RFC822.TEXT');
+		$items = array('FLAGS', 'RFC822.HEADER', 'RFC822.TEXT', 'X-GM-LABELS', 'X-GM-THRID');
 		$itemList = $this->protocol->escapeList($items);
 		
 		$fetch_response = $this->protocol->requestAndResponse('UID FETCH', array($uid, $itemList));
@@ -234,7 +244,7 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	 * @return string
 	 */
 	public function getThreadId($uid) {
-		$fetch_response = $this->protocol->requestAndResponse('UID FETCH', array($uid, 'X-GM-THRID'));
+		$fetch_response = $this->protocol->requestAndResponse('UID FETCH', array($uid, ''));
 		if (!isset($fetch_response[0][2]) || !is_array($fetch_response[0][2]) || !isset($fetch_response[0][2][1])) {
 			throw new GmailException("Cannot retreieve thread id by uid. ".var_export($fetch_response, TRUE));
 		}
@@ -248,22 +258,30 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	 */
 	public function getMessageData($uid) {
 		$data = $this->getMessageDataRaw($uid);
-		$threadId = $this->getThreadId($uid);
 		
 		$header = $data['RFC822.HEADER'];		
 		$content = $data['RFC822.TEXT'];
+		$threadId = $data['X-GM-THRID'];
+		$labels = $data['X-GM-LABELS'];
 		$flags = array();
 		foreach ($data['FLAGS'] as $flag) {
 			$flags[] = isset(static::$knownFlags[$flag]) ? static::$knownFlags[$flag] : $flag;
 		}
-		$msg = new \Zend\Mail\Storage\Message(array(
+		
+		$msg = new Message(array(
 			'handler' => $this,
 			'id' => $uid,
 			'headers' => $header,
 			'content' => $content,
 			'flags' => $flags
 		));
-		$msg->getHeaders()->addHeaderLine('x-gm-thrid', $threadId);
+		$msgHeaders = $msg->getHeaders();
+		$msgHeaders->addHeaderLine('x-gm-thrid', $threadId);
+		if ($labels) {
+			foreach($labels AS $label) {
+				$msgHeaders->addHeaderLine('x-gm-labels', $label);
+			}
+		}
 		return $msg;
 	}
 	
