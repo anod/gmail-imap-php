@@ -2,7 +2,7 @@
 namespace Anod\Gmail;
 /**
  * 
- * TODO: removeLabel(s), applyLables, moveToInbox, markAsRead/markAsUnread
+ * TODO: moveToInbox, markAsRead/markAsUnread
  * 
  * @author Alex Gavrishev <alex.gavrishev@gmail.com>
  * 
@@ -163,8 +163,37 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	 * @return null|bool|array tokens if success, false if error, null if bad request
 	 */	
 	public function applyLabel($uid, $label) {
-		$response = $this->protocol->requestAndResponse('UID STORE', array($uid, '+X-GM-LABELS', '('.$label.')'));
-		return $response;
+		return $this->applyLabels($uid, array($label));
+	}
+	
+	/**
+	 * 
+	 * @param int $uid
+	 * @param array $labels <string>
+	 * @return null|bool|array tokens if success, false if error, null if bad request
+	 */
+	public function applyLabels($uid, array $labels) {
+		$this->storeLabels($uid, '+X-GM-LABELS', $labels);
+	}
+
+	/**
+	 * 
+	 * @param int $uid
+	 * @param string $label
+	 * @return null|bool|array tokens if success, false if error, null if bad request
+	 */
+	public function removeLabel($uid, $label) {
+		return $this->removeLabels($uid, array($label));
+	}
+	
+	/**
+	 *
+	 * @param int $uid
+	 * @param array $labels <string>
+	 * @return null|bool|array tokens if success, false if error, null if bad request
+	 */
+	public function removeLabels($uid, array $labels) {
+		return $this->storeLabels($uid, '-X-GM-LABELS', $labels);
 	}
 	
 	/**
@@ -236,6 +265,24 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 		));
 		$msg->getHeaders()->addHeaderLine('x-gm-thrid', $threadId);
 		return $msg;
+	}
+	
+	/**
+	 *
+	 * @param int $uid
+	 * @param string $command
+	 * @param array $labels
+	 * @return null|bool|array tokens if success, false if error, null if bad request
+	 */
+	protected function storeLabels($uid, $command, array $labels) {
+		$escapedLabels = array();
+		foreach($labels AS $label) {
+			$escapedLabels[] = $this->protocol->escapeString($label);
+		}
+	
+		$labelsList = $this->protocol->escapeList($escapedLabels);
+		$response = $this->protocol->requestAndResponse('UID STORE', array($uid, $command, $labelsList));
+		return $response;
 	}
 	
 }

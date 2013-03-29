@@ -7,3 +7,6 @@
 #Composer
 vendor/
 composer.lock
+
+#Project
+example.php
