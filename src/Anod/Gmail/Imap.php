@@ -26,5 +26,17 @@ class Imap extends \Zend\Mail\Protocol\Imap {
 			echo $tag.' '.$command.' '.implode(' ', $tokens).PHP_EOL;
 		}
 	}
+	
+	/**
+	 * (non-PHPdoc)
+	 * @see \Zend\Mail\Protocol\Imap::_nextLine()
+	 */
+	protected function _nextLine() {
+		$line = parent::_nextLine();
+		if ($this->debug) {
+			echo "    ".trim($line).PHP_EOL;
+		}
+		return $line;
+	}
 }
 class ImapException extends \Exception {};
