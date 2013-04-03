@@ -135,7 +135,7 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 		if (isset($search_response[0][1])) {
 			return (int)$search_response[0][1];
 		}
-		throw new GmailException("Cannot retreieve message uid. ".var_export($search_response, TRUE));
+		throw new GmailException("Cannot retrieve message uid. ".var_export($search_response, TRUE));
 	}
 
 	/**
@@ -207,7 +207,7 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 		
 		$fetch_response = $this->protocol->requestAndResponse('UID FETCH', array($uid, $itemList));
 		if (!isset($fetch_response[0][2]) || !is_array($fetch_response[0][2]) || !isset($fetch_response[0][2][1])) {
-			throw new GmailException("Cannot retreieve list of labels by uid. ".var_export($fetch_response, TRUE));
+			throw new GmailException("Cannot retrieve list of labels by uid. ".var_export($fetch_response, TRUE));
 		}
 		return $fetch_response[0][2][1];
 	}
@@ -224,7 +224,7 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 		
 		$fetch_response = $this->protocol->requestAndResponse('UID FETCH', array($uid, $itemList));
 		if (!isset($fetch_response[0][2]) || !is_array($fetch_response[0][2])) {
-			throw new GmailException("Cannot retreieve message by uid. ".var_export($fetch_response, TRUE));
+			throw new GmailException("Cannot retrieve message by uid. ".var_export($fetch_response, TRUE));
 		}
 		$response_count = count($fetch_response);
 		$data = array();
@@ -250,9 +250,9 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	 * @return string
 	 */
 	public function getThreadId($uid) {
-		$fetch_response = $this->protocol->requestAndResponse('UID FETCH', array($uid, ''));
+		$fetch_response = $this->protocol->requestAndResponse('UID FETCH', array($uid, 'X-GM-THRID'));
 		if (!isset($fetch_response[0][2]) || !is_array($fetch_response[0][2]) || !isset($fetch_response[0][2][1])) {
-			throw new GmailException("Cannot retreieve thread id by uid. ".var_export($fetch_response, TRUE));
+			throw new GmailException("Cannot retrieve thread id by uid. ".var_export($fetch_response, TRUE));
 		}
 		return $fetch_response[0][2][1];
 	}
