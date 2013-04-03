@@ -196,6 +196,12 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 		return $this->storeLabels($uid, '-X-GM-LABELS', $labels);
 	}
 	
+	/**
+	 * List all labels for message with $uid
+	 * @param int $uid
+	 * @throws GmailException
+	 * @return array <string> labels
+	 */
 	public function getLabels($uid) {
 		$itemList = $this->protocol->escapeList(array('X-GM-LABELS'));
 		
