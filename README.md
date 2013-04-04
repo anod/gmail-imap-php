@@ -5,8 +5,8 @@ Wrapper library above Gmail IMAP API.
 
 ## Features
 
-The library extends Zend Impa Library, this way it provides all basic IMAP functionality.
-In addition it provides simple API for:
+The library extends Zend Imap Library, this way it provides all basic IMAP functionality.
+In addition it provides simple Gmail specific API for:
  * OAUTH2 Authentication
  * get UID of the message
  * work with GMail labels: retrive, apply, remove
