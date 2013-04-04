@@ -1,11 +1,28 @@
-GMAIL IMAP API
+GMAIL IMAP API in PHP
 =============================
 
-Wrapper above Gmail IMAP API
+Wrapper library above Gmail IMAP API.
+
+## Features
+
+The library extends Zend Impa Library, this way it provides all basic IMAP functionality.
+In addition it provides simple API for:
+ * OAUTH2 Authentication
+ * get UID of the message
+ * work with GMail labels: retrive, apply, remove
+ * Getting Gmail thread id
+ * Utility to convert Gmail message id representation: from big int to hex and opposite
+ * Archive message
+
+## TODO
+
+* move to inbox
+* mark as read/unread
 
 ## Requirements
 
-Zend Imap Library
+Composer
+  * Zend Imap Library
 
 ## Usage example
 
