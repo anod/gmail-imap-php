@@ -141,7 +141,7 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	/**
 	 * 
 	 * @param int $uid
-	 * @return null|bool|array tokens if success, false if error, null if bad request
+	 * @return bool
 	 */
 	public function archive($uid) {
 		//1st veryfi that email in all mail folder
@@ -152,9 +152,9 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 			$items = array('\Deleted');
 			$itemList = $this->protocol->escapeList($items);
 			$response = $this->protocol->requestAndResponse('UID STORE', array($uid, '+FLAGS', $itemList), true);
-			return $response;
+			return $this->protocol->expunge();
 		}
-		return null;
+		return false;
 	}
 	
 	/**
