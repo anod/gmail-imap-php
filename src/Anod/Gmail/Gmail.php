@@ -207,7 +207,7 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	 */
 	public function removeMessageUID($uid) {
 		//Flag as deleted in the current box
-		$items = array(\Zend\Mail\Storage::FLAG_DELETED);
+		$flags = array(\Zend\Mail\Storage::FLAG_DELETED);
 		$this->setFlagsUID($uid, $flags);
 		return $this->protocol->expunge();
 	}
