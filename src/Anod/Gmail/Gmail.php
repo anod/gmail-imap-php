@@ -144,17 +144,27 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	 * @return bool
 	 */
 	public function archive($uid) {
-		//1st veryfi that email in all mail folder
+		//1st verify that email in all mail folder
 		$folder = $this->protocol->escapeString(self::MAILBOX_ALL);
 		$copy_response = $this->protocol->requestAndResponse('UID COPY', array($uid, $folder), true);
 		if ($copy_response) {
 			//Flag as deleted in the current box
-			$items = array('\Deleted');
-			$itemList = $this->protocol->escapeList($items);
-			$response = $this->protocol->requestAndResponse('UID STORE', array($uid, '+FLAGS', $itemList), true);
-			return $this->protocol->expunge();
+			return $this->removeMessageUID($uid);
 		}
 		return false;
+	}
+	
+	/**
+	 * Mark message as \Deleted by UID
+	 * @param int $uid
+	 * @return bool
+	 */
+	public function removeMessageUID($uid) {
+		//Flag as deleted in the current box
+		$items = array(\Zend\Mail\Storage::FLAG_DELETED);
+		$itemList = $this->protocol->escapeList($items);
+		$response = $this->protocol->requestAndResponse('UID STORE', array($uid, '+FLAGS', $itemList), true);
+		return $this->protocol->expunge();
 	}
 	
 	/**
