@@ -14,8 +14,14 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	const GMAIL_PORT = '993';
 	const USE_SSL = true;
 
-	const MAILBOX_INBOX = 'INBOX';
-	const MAILBOX_ALL = '[Gmail]/All Mail';
+	const MAILBOX_INBOX	 	= 'INBOX';
+	const MAILBOX_ALL	 	= '[Gmail]/All Mail';
+	const MAILBOX_DRAFTS 	= '[Gmail]/Drafts';
+	const MAILBOX_IMPORTANT = '[Gmail]/Important';
+	const MAILBOX_SENT 		= '[Gmail]/Sent Mail';
+	const MAILBOX_SPAM		= '[Gmail]/Spam';
+	const MAILBOX_STARRED	= '[Gmail]/Starred';
+	const MAILBOX_TRASH 	= '[Gmail]/Trash';
 	
 	/**
 	 * @var \Anod\Gmail\OAuth
@@ -144,14 +150,54 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	 * @return bool
 	 */
 	public function archive($uid) {
-		//1st verify that email in all mail folder
-		$folder = $this->protocol->escapeString(self::MAILBOX_ALL);
-		$copy_response = $this->protocol->requestAndResponse('UID COPY', array($uid, $folder), true);
+		return $this->moveMessageUID($uid, self::MAILBOX_ALL);
+	}
+	
+	/**
+	 * 
+	 * @param int $uid
+	 * @return bool
+	 */
+	public function trash($uid) {
+		return $this->moveMessageUID($uid, self::MAILBOX_TRASH);
+	}
+	
+	/**
+	 * 
+	 * @param int $uid
+	 * @param string $dest
+	 * @return boolean
+	 */
+	public function moveMessageUID($uid, $dest)
+	{
+		$copy_response = $this->copyMessageUID($uid, $dest);
 		if ($copy_response) {
 			//Flag as deleted in the current box
 			return $this->removeMessageUID($uid);
 		}
 		return false;
+	}
+
+	/**
+	 * 
+	 * @param int $uid
+	 * @param string $dest
+	 * @return mixed
+	 */
+	public function copyMessageUID($uid, $dest) {
+		$folder = $this->protocol->escapeString($dest);
+		return $this->protocol->requestAndResponse('UID COPY', array($uid, $folder), true);
+	} 
+
+	/**
+	 * Apply flag to message by UID
+	 * @param int $uid
+	 * @param array $flags
+	 * @return mixed
+	 */
+	public function setFlagsUID($uid,array $flags) {
+		$itemList = $this->protocol->escapeList($flags);
+		return $this->protocol->requestAndResponse('UID STORE', array($uid, '+FLAGS', $itemList), true);
 	}
 	
 	/**
@@ -162,8 +208,7 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	public function removeMessageUID($uid) {
 		//Flag as deleted in the current box
 		$items = array(\Zend\Mail\Storage::FLAG_DELETED);
-		$itemList = $this->protocol->escapeList($items);
-		$response = $this->protocol->requestAndResponse('UID STORE', array($uid, '+FLAGS', $itemList), true);
+		$this->setFlagsUID($uid, $flags);
 		return $this->protocol->expunge();
 	}
 	
