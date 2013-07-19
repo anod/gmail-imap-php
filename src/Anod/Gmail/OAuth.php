@@ -41,7 +41,7 @@ class OAuth {
 			if ($is_plus) {
 				error_log("got an extra server challenge: ".base64_decode($response));
 				// Send empty client response.
-				$protocol->sendRequest('');
+				$this->protocol->sendRequest('');
 			} else {
 				if (preg_match('/^NO /i', $response) || preg_match('/^BAD /i', $response)) {
 					new OAuthException('Authentication failure: '.$response);
