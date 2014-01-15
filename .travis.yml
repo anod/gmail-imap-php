@@ -4,6 +4,6 @@ php:
     - 5.4
     - 5.3
 
-#composer install
+script: composer install
 
 script: phpunit --coverage-text tests/
