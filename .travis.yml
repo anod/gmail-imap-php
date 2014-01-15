@@ -1,9 +1,13 @@
+
 language: php
+
 php:
-    - 5.5
+    - 5.3.3
     - 5.4
-    - 5.3
+    - 5.5
+    - hhvm
 
-script: composer install
+before_script:
+    - composer install
 
-script: phpunit --coverage-text tests/
+script: phpunit --coverage-text -c tests/phpunit.xml tests/
