@@ -2,7 +2,8 @@ language: php
 php:
     - 5.5
     - 5.4
+    - 5.3
 
 #composer install
 
-script: phpunit --coverage-text
+script: phpunit --coverage-text tests/
