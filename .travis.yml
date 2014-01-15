@@ -3,6 +3,6 @@ php:
     - 5.5
     - 5.4
 
-composer install
+#composer install
 
-phpunit
+script: phpunit --coverage-text
