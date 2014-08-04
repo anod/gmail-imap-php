@@ -1,7 +1,7 @@
 <?php
 namespace Anod\Gmail;
 /**
- * Helper to convert between different representaitons of gmail message_id
+ * Helper to convert between different representations of gmail message_id
  * 
  * @author Alex Gavrishev <alex.gavrishev@gmail.com>
  *

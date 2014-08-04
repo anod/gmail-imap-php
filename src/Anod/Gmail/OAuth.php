@@ -20,14 +20,14 @@ class OAuth {
 	public function __construct(\Zend\Mail\Protocol\Imap $protocol) {
 		$this->protocol = $protocol;
 	}
-	
+
 	/**
 	 * Given an open IMAP connection, attempts to authenticate with OAuth2.
 	 *
-	 * @param $imap is an open IMAP connection.
-	 * @param $email is a Gmail address.
-	 * @param $accessToken is a valid OAuth 2.0 access token for the given email address.
+	 * @param string $email is a Gmail address.
+	 * @param string $accessToken is a valid OAuth 2.0 access token for the given email address.
 	 *
+	 * @throws OAuthException
 	 * @returns bool true on successful authentication, false otherwise.
 	 */
 	public function authenticate($email, $accessToken) {
@@ -44,8 +44,7 @@ class OAuth {
 				$this->protocol->sendRequest('');
 			} else {
 				if (preg_match('/^NO /i', $response) || preg_match('/^BAD /i', $response)) {
-					new OAuthException('Authentication failure: '.$response);
-					return false;
+					throw new OAuthException('Authentication failure: '.$response);
 				} else if (preg_match("/^OK /i", $response)) {
 					return true;
 				} else {
@@ -53,11 +52,15 @@ class OAuth {
 				}
 			}
 		}
+		return false;
 	}
 
 	/**
 	 * Builds an OAuth2 authentication string for the given email address and access
 	 * token.
+	 * @param string $email
+	 * @param string $accessToken
+	 * @return string
 	 */
 	private function constructAuthString($email, $accessToken) {
 		return base64_encode("user=$email\1auth=Bearer $accessToken\1\1");

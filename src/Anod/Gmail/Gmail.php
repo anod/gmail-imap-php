@@ -22,7 +22,6 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	const MAILBOX_SPAM		= '[Gmail]/Spam';
 	const MAILBOX_STARRED	= '[Gmail]/Starred';
 	const MAILBOX_TRASH 	= '[Gmail]/Trash';
-	
 	/**
 	 * @var \Anod\Gmail\OAuth
 	 */
@@ -32,8 +31,14 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	 */
 	private $debug = false;
 	/**
+	 * @var array
+	 */
+	protected $id;
+
+
+	/**
 	 *
-	 * @param \Zend\Mail\Protocol\Imap $imap
+	 * @param \Zend\Mail\Protocol\Imap $protocol
 	 */
 	public function __construct(\Zend\Mail\Protocol\Imap $protocol) {
 		$this->protocol = $protocol;
@@ -53,7 +58,7 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 			"name" , $name,
 			"version" , $version,
 			"vendor" , $vendor,
-			"contact" , $contact	
+			"contact" , $contact
 		);
 		return $this;
 	}
@@ -132,8 +137,10 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 		}
 		return $this;
 	}
-	
+
 	/**
+	 * @param $msgid
+	 * @throws GmailException
 	 * @return int
 	 */
 	public function getUID($msgid) {
@@ -228,7 +235,7 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	 * @return null|bool|array tokens if success, false if error, null if bad request
 	 */
 	public function applyLabels($uid, array $labels) {
-		$this->storeLabels($uid, '+X-GM-LABELS', $labels);
+		return $this->storeLabels($uid, '+X-GM-LABELS', $labels);
 	}
 
 	/**
@@ -320,7 +327,7 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	public function getMessageData($uid) {
 		$data = $this->getMessageDataRaw($uid);
 		
-		$header = $data['RFC822.HEADER'];		
+		$header = $data['RFC822.HEADER'];
 		$content = $data['RFC822.TEXT'];
 		$threadId = $data['X-GM-THRID'];
 		$labels = $data['X-GM-LABELS'];

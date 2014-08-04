@@ -14,10 +14,11 @@ class Imap extends \Zend\Mail\Protocol\Imap {
 		parent::__construct();
 		$this->debug = (bool)$debug;
 	}
-	
+
 	/**
-	 * (non-PHPdoc)
-	 * @see \Zend\Mail\Protocol\Imap::sendRequest()
+	 * @param string $command
+	 * @param array $tokens
+	 * @param null $tag
 	 */
 	public function sendRequest($command, $tokens = array(), &$tag = null)
 	{
@@ -26,10 +27,9 @@ class Imap extends \Zend\Mail\Protocol\Imap {
 			echo $tag.' '.$command.' '.implode(' ', $tokens).PHP_EOL;
 		}
 	}
-	
+
 	/**
-	 * (non-PHPdoc)
-	 * @see \Zend\Mail\Protocol\Imap::_nextLine()
+	 * @return string
 	 */
 	protected function _nextLine() {
 		$line = parent::_nextLine();
