@@ -7,9 +7,12 @@ namespace Anod\Gmail;
  *
  */
 class GmailTest extends \PHPUnit_Framework_TestCase {
-	
+
 	/**
 	 * @dataProvider providerGetRawMessageUID
+	 * @param $response
+	 * @param $expected
+	 * @throws GmailException
 	 */
 	public function testGetRawMessageUID($response, $expected) {
 		$protocol = $this->getMock('\Zend\Mail\Protocol\Imap', array('requestAndResponse'));

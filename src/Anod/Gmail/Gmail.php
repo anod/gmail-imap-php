@@ -40,7 +40,19 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	 *
 	 * @param \Zend\Mail\Protocol\Imap $protocol
 	 */
-	public function __construct(\Zend\Mail\Protocol\Imap $protocol) {
+	public function __construct($protocol) {
+		$this->init($protocol);
+
+	}
+
+	/**
+	 * Use init method to fix incapability with HHVM:
+	 * Fatal error: Declaration of Anod\Gmail\Gmail::__construct()
+	 * must be compatible with that of Zend\Mail\Storage\AbstractStorage::__construct()
+	 *
+	 * @param \Zend\Mail\Protocol\Imap $protocol
+	 */
+	protected function init(\Zend\Mail\Protocol\Imap $protocol) {
 		$this->protocol = $protocol;
 		$this->oauth = new OAuth($protocol);
 	}
