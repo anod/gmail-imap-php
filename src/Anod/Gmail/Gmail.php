@@ -2,8 +2,6 @@
 namespace Anod\Gmail;
 /**
  * 
- * TODO: moveToInbox, markAsRead/markAsUnread
- * 
  * @author Alex Gavrishev <alex.gavrishev@gmail.com>
  * 
  * @see https://developers.google.com/google-apps/gmail/imap_extensions
@@ -11,8 +9,8 @@ namespace Anod\Gmail;
  */
 class Gmail extends \Zend\Mail\Storage\Imap {
 	const GMAIL_HOST = 'imap.gmail.com';
-	const GMAIL_PORT = '993';
-	const USE_SSL = true;
+	const GMAIL_PORT = 993;
+	const USE_SSL = 'ssl';
 
 	const MAILBOX_INBOX	 	= 'INBOX';
 	const MAILBOX_ALL	 	= '[Gmail]/All Mail';
@@ -26,10 +24,6 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 	 * @var \Anod\Gmail\OAuth
 	 */
 	private $oauth;
-	/**
-	 * @var bool
-	 */
-	private $debug = false;
 	/**
 	 * @var array
 	 */
@@ -75,14 +69,6 @@ class Gmail extends \Zend\Mail\Storage\Imap {
 		return $this;
 	}
 	
-	/**
-	 * @param bool $debug
-	 * @return \Anod\Gmail\Gmail
-	 */
-	public function setDebug($debug) {
-		$this->debug = (bool)$debug;
-		return $this;
-	}
 	/**
 	 * @return mixed
 	 */	
