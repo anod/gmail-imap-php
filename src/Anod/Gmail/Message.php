@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @author Alex Gavrishev <alex.gavrishev@gmail.com>
  */
@@ -15,19 +16,18 @@ class Message extends \Zend\Mail\Storage\Message
      * Attached labels
      * @return array <string>
      */
-    public function getLabels()
+    public function getLabels(): array
     {
         if ($this->getHeaders()->get('x-gm-labels')) {
             return $this->getHeader('x-gm-labels', 'array');
         }
-        return array();
+        return [];
     }
     
     /**
      * Thread Id of the message
-     * @return string
      */
-    public function getThreadId()
+    public function getThreadId(): string
     {
         return $this->getHeader('x-gm-thrid', 'string');
     }

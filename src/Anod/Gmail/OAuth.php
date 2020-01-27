@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @author Alex Gavrishev <alex.gavrishev@gmail.com>
  */
@@ -31,9 +32,9 @@ class OAuth
      * @param string $accessToken is a valid OAuth 2.0 access token for the given email address.
      *
      * @throws OAuthException
-     * @returns bool true on successful authentication, false otherwise.
+     * @return bool true on successful authentication, false otherwise.
      */
-    public function authenticate($email, $accessToken)
+    public function authenticate(string $email, string $accessToken): bool
     {
         $authenticateParams = array(
             'XOAUTH2', $this->constructAuthString($email, $accessToken)
@@ -62,11 +63,8 @@ class OAuth
     /**
      * Builds an OAuth2 authentication string for the given email address and access
      * token.
-     * @param string $email
-     * @param string $accessToken
-     * @return string
      */
-    private function constructAuthString($email, $accessToken)
+    private function constructAuthString(string $email, string $accessToken): string
     {
         return base64_encode("user=$email\1auth=Bearer $accessToken\1\1");
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @author Alex Gavrishev <alex.gavrishev@gmail.com>
  */
@@ -12,10 +13,8 @@ class Math
     /**
      * Converts hex number into large integer
      * \Anod\Gmail\Math::bchexdec("13d6daab0816ace7") == "1429570359846677735"
-     * @param string $hex
-     * @return number
      */
-    public static function bchexdec($hex)
+    public static function bchexdec(string $hex): string
     {
         $dec = 0;
         $len = strlen($hex);
@@ -28,10 +27,8 @@ class Math
     /**
      * Converts large number into hex representation
      * \Anod\Gmail\Math::bchexdec("1429570359846677735") == "13d6daab0816ace7"
-     * @param string $number
-     * @return string
      */
-    public static function bcdechex($number)
+    public static function bcdechex(string $number): string
     {
         $hexval = '';
         while ($number != '0') {

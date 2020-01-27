@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @author Alex Gavrishev <alex.gavrishev@gmail.com>
  */
@@ -33,10 +34,9 @@ class Gmail extends \Zend\Mail\Storage\Imap
     protected $id;
 
     /**
-     *
      * @param \Zend\Mail\Protocol\Imap $protocol
      */
-    public function __construct($protocol)
+    public function __construct(\Zend\Mail\Protocol\Imap $protocol)
     {
         $this->init($protocol);
     }
@@ -45,8 +45,6 @@ class Gmail extends \Zend\Mail\Storage\Imap
      * Use init method to fix incapability with HHVM:
      * Fatal error: Declaration of Anod\Gmail\Gmail::__construct()
      * must be compatible with that of Zend\Mail\Storage\AbstractStorage::__construct()
-     *
-     * @param \Zend\Mail\Protocol\Imap $protocol
      */
     protected function init(\Zend\Mail\Protocol\Imap $protocol)
     {
@@ -54,15 +52,7 @@ class Gmail extends \Zend\Mail\Storage\Imap
         $this->oauth = new OAuth($protocol);
     }
     
-    /**
-     *
-     * @param string $name
-     * @param string $version
-     * @param string $vendor
-     * @param string $contact
-     * @return \Anod\Gmail\Gmail
-     */
-    public function setId($name, $version, $vendor, $contact)
+    public function setId(string $name, string $version, string $vendor, string $contact) : \Anod\Gmail\Gmail
     {
         $this->id =array(
             "name" , $name,
@@ -89,43 +79,27 @@ class Gmail extends \Zend\Mail\Storage\Imap
         );
     }
     
-    /**
-     *
-     * @param string $email
-     * @param string $accessToken
-     * @return \Anod\Gmail\Gmail
-     */
-    public function authenticate($email, $accessToken)
+    public function authenticate(string $email, string $accessToken): \Anod\Gmail\Gmail
     {
         $this->oauth->authenticate($email, $accessToken);
         return $this;
     }
     
-    /**
-     *
-     * @return \Zend\Mail\Protocol\Imap
-     */
-    public function getProtocol()
+    public function getProtocol(): \Zend\Mail\Protocol\Imap
     {
         return $this->protocol;
     }
     
-    /**
-     *
-     * @return \Anod\Gmail\Gmail
-     */
-    public function connect()
+    public function connect(): \Anod\Gmail\Gmail
     {
         $this->protocol->connect(self::GMAIL_HOST, self::GMAIL_PORT, self::USE_SSL);
         return $this;
     }
 
     /**
-     *
      * @throws GmailException
-     * @return \Anod\Gmail\Gmail
      */
-    public function selectInbox()
+    public function selectInbox(): \Anod\Gmail\Gmail
     {
         $result = $this->protocol->select(self::MAILBOX_INBOX);
         if (!$result) {
@@ -135,11 +109,9 @@ class Gmail extends \Zend\Mail\Storage\Imap
     }
     
     /**
-     *
      * @throws GmailException
-     * @return \Anod\Gmail\Gmail
      */
-    public function selectAllMail()
+    public function selectAllMail(): \Anod\Gmail\Gmail
     {
         $result = $this->protocol->select(self::MAILBOX_ALL);
         if (!$result) {
@@ -149,46 +121,28 @@ class Gmail extends \Zend\Mail\Storage\Imap
     }
 
     /**
-     * @param $msgid
      * @throws GmailException
-     * @return int
      */
-    public function getUID($msgid)
+    public function getUID(string $msgid): int
     {
-        $search_response = $this->protocol->requestAndResponse('UID SEARCH', array('X-GM-MSGID', $msgid));
+        $search_response = $this->protocol->requestAndResponse('UID SEARCH', ['X-GM-MSGID', $msgid]);
         if (isset($search_response[0][1])) {
             return (int)$search_response[0][1];
         }
         throw new GmailException("Cannot retrieve message uid. ".var_export($search_response, true));
     }
 
-    /**
-     *
-     * @param int $uid
-     * @return bool
-     */
-    public function archive($uid)
+    public function archive(int $uid): bool
     {
         return $this->moveMessageUID($uid, self::MAILBOX_ALL);
     }
-    
-    /**
-     *
-     * @param int $uid
-     * @return bool
-     */
-    public function trash($uid)
+
+    public function trash(Int $uid): bool
     {
         return $this->moveMessageUID($uid, self::MAILBOX_TRASH);
     }
     
-    /**
-     *
-     * @param int $uid
-     * @param string $dest
-     * @return boolean
-     */
-    public function moveMessageUID($uid, $dest)
+    public function moveMessageUID(int $uid, string $dest): bool
     {
         $copy_response = $this->copyMessageUID($uid, $dest);
         if ($copy_response) {
@@ -198,13 +152,7 @@ class Gmail extends \Zend\Mail\Storage\Imap
         return false;
     }
 
-    /**
-     *
-     * @param int $uid
-     * @param string $dest
-     * @return mixed
-     */
-    public function copyMessageUID($uid, $dest)
+    public function copyMessageUID(int $uid, string $dest)
     {
         $folder = $this->protocol->escapeString($dest);
         return $this->protocol->requestAndResponse('UID COPY', array($uid, $folder), true);
@@ -212,11 +160,8 @@ class Gmail extends \Zend\Mail\Storage\Imap
 
     /**
      * Apply flag to message by UID
-     * @param int $uid
-     * @param array $flags
-     * @return mixed
      */
-    public function setFlagsUID($uid, array $flags)
+    public function setFlagsUID(int $uid, array $flags)
     {
         $itemList = $this->protocol->escapeList($flags);
         return $this->protocol->requestAndResponse('UID STORE', array($uid, '+FLAGS', $itemList), true);
@@ -224,10 +169,9 @@ class Gmail extends \Zend\Mail\Storage\Imap
     
     /**
      * Mark message as \Deleted by UID
-     * @param int $uid
      * @return bool
      */
-    public function removeMessageUID($uid)
+    public function removeMessageUID(int $uid): bool
     {
         //Flag as deleted in the current box
         $flags = array(\Zend\Mail\Storage::FLAG_DELETED);
@@ -240,18 +184,17 @@ class Gmail extends \Zend\Mail\Storage\Imap
      * @param string $label
      * @return null|bool|array tokens if success, false if error, null if bad request
      */
-    public function applyLabel($uid, $label)
+    public function applyLabel(int $uid, string $label)
     {
         return $this->applyLabels($uid, array($label));
     }
     
     /**
-     *
      * @param int $uid
      * @param array $labels <string>
      * @return null|bool|array tokens if success, false if error, null if bad request
      */
-    public function applyLabels($uid, array $labels)
+    public function applyLabels(int $uid, array $labels)
     {
         return $this->storeLabels($uid, '+X-GM-LABELS', $labels);
     }
@@ -262,7 +205,7 @@ class Gmail extends \Zend\Mail\Storage\Imap
      * @param string $label
      * @return null|bool|array tokens if success, false if error, null if bad request
      */
-    public function removeLabel($uid, $label)
+    public function removeLabel(int $uid, string $label)
     {
         return $this->removeLabels($uid, array($label));
     }
@@ -280,11 +223,10 @@ class Gmail extends \Zend\Mail\Storage\Imap
     
     /**
      * List all labels for message with $uid
-     * @param int $uid
      * @throws GmailException
      * @return array <string> labels
      */
-    public function getLabels($uid)
+    public function getLabels(int $uid)
     {
         $itemList = $this->protocol->escapeList(array('X-GM-LABELS'));
         
@@ -296,12 +238,9 @@ class Gmail extends \Zend\Mail\Storage\Imap
     }
     
     /**
-     *
-     * @param int $uid
      * @throws GmailException
-     * @return array
      */
-    public function getMessageDataRaw($uid)
+    public function getMessageDataRaw(int $uid): array
     {
         $items = array('FLAGS', 'RFC822.HEADER', 'RFC822.TEXT', 'X-GM-LABELS', 'X-GM-THRID');
         $itemList = $this->protocol->escapeList($items);
@@ -328,12 +267,9 @@ class Gmail extends \Zend\Mail\Storage\Imap
     }
     
     /**
-     *
-     * @param int $uid
      * @throws GmailException
-     * @return string
      */
-    public function getThreadId($uid)
+    public function getThreadId(int $uid): string
     {
         $fetch_response = $this->protocol->requestAndResponse('UID FETCH', array($uid, 'X-GM-THRID'));
         if (!isset($fetch_response[0][2]) || !is_array($fetch_response[0][2]) || !isset($fetch_response[0][2][1])) {
@@ -342,12 +278,7 @@ class Gmail extends \Zend\Mail\Storage\Imap
         return $fetch_response[0][2][1];
     }
     
-    /**
-     *
-     * @param int $uid
-     * @return Message
-     */
-    public function getMessageData($uid)
+    public function getMessageData(int $uid): Message
     {
         $data = $this->getMessageDataRaw($uid);
         
@@ -355,18 +286,18 @@ class Gmail extends \Zend\Mail\Storage\Imap
         $content = $data['RFC822.TEXT'];
         $threadId = $data['X-GM-THRID'];
         $labels = $data['X-GM-LABELS'];
-        $flags = array();
+        $flags = [];
         foreach ($data['FLAGS'] as $flag) {
             $flags[] = isset(static::$knownFlags[$flag]) ? static::$knownFlags[$flag] : $flag;
         }
         
-        $msg = new Message(array(
+        $msg = new Message([
             'handler' => $this,
             'id' => $uid,
             'headers' => $header,
             'content' => $content,
             'flags' => $flags
-        ));
+        ]);
         $msgHeaders = $msg->getHeaders();
         $msgHeaders->addHeaderLine('x-gm-thrid', $threadId);
         if ($labels) {
@@ -378,13 +309,9 @@ class Gmail extends \Zend\Mail\Storage\Imap
     }
     
     /**
-     *
-     * @param int $uid
-     * @param string $command
-     * @param array $labels
      * @return null|bool|array tokens if success, false if error, null if bad request
      */
-    protected function storeLabels($uid, $command, array $labels)
+    protected function storeLabels(int $uid, string $command, array $labels)
     {
         $escapedLabels = array();
         foreach ($labels as $label) {

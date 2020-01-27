@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * @author Alex Gavrishev <alex.gavrishev@gmail.com>
  */
@@ -11,21 +12,13 @@ class Imap extends \Zend\Mail\Protocol\Imap
 {
     private $debug = false;
 
-    /**
-     * @param bool $debug
-     */
-    public function __construct($debug = false)
+    public function __construct(bool $debug = false)
     {
         parent::__construct();
         $this->debug = (bool)$debug;
     }
 
-    /**
-     * @param string $command
-     * @param array $tokens
-     * @param null $tag
-     */
-    public function sendRequest($command, $tokens = array(), &$tag = null)
+    public function sendRequest($command, $tokens = [], &$tag = null)
     {
         parent::sendRequest($command, $tokens, $tag);
         if ($this->debug) {
@@ -33,10 +26,7 @@ class Imap extends \Zend\Mail\Protocol\Imap
         }
     }
 
-    /**
-     * @return string
-     */
-    protected function nextLine()
+    protected function nextLine(): string
     {
         $line = parent::nextLine();
         if ($this->debug) {
