@@ -5,32 +5,35 @@ declare(strict_types=1);
  */
 namespace Anod\Gmail;
 
+use Psr\Log\LoggerInterface;
+
 /**
  * Extendz Zend Imap with debug messages
  */
 class Imap extends \Zend\Mail\Protocol\Imap
 {
-    private $debug = false;
+    /** @var LoggerInterface */
+    private $logger;
 
-    public function __construct(bool $debug = false)
+    public function __construct(LoggerInterface $logger = null)
     {
         parent::__construct();
-        $this->debug = (bool)$debug;
+        $this->logger = $logger;
     }
 
     public function sendRequest($command, $tokens = [], &$tag = null)
     {
         parent::sendRequest($command, $tokens, $tag);
-        if ($this->debug) {
-            echo $tag.' '.$command.' '.implode(' ', $tokens).PHP_EOL;
+        if ($this->logger) {
+            $this->logger->debug($tag.' '.$command.' '.implode(' ', $tokens));
         }
     }
 
     protected function nextLine(): string
     {
         $line = parent::nextLine();
-        if ($this->debug) {
-            echo "    ".trim($line).PHP_EOL;
+        if ($this->logger) {
+            $this->logger->debug("    ".trim($line));
         }
         return $line;
     }
