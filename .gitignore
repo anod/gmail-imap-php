@@ -10,3 +10,5 @@ composer.lock
 
 #Project
 example.php
+.php_cs.cache
+composer.phar
